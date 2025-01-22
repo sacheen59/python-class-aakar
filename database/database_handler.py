@@ -25,8 +25,7 @@ def create_table():
     print("Table created successfully.")
 
 def insert_data(**kwargs):
-    cursor.executemany(
-        '''
+    insert_query = '''
         INSERT INTO tb_user (
             firstname,
             lastname,
@@ -35,9 +34,26 @@ def insert_data(**kwargs):
             course
         )
         VALUES (?,?,?,?,?)
-        ''',
-        (kwargs['firstname'],kwargs['lastname'],kwargs['address'],kwargs['phone_number'],kwargs['course'])
+        '''
+    values = (kwargs['firstname'],kwargs['lastname'],kwargs['address'],kwargs['phone_number'],kwargs['course'])
+    cursor.execute(insert_query,values)
+    connection.commit()
+
+def update_query(id,address):
+    cursor.execute(
+        "UPDATE tb_user SET address = ?  WHERE id = ?",
+        (address,id)
     )
-    
     connection.commit()
     connection.close()
+
+def delete_query(id):
+    cursor.execute('DELETE FROM tb_user WHERE id = ?',(id))
+    connection.commit()
+    connection.close()
+    
+def select_query(id):
+    cursor.execute('SELECT * from tb_user WHERE id = ?',(id))
+    data = cursor.fetchone()
+    return data
+    
